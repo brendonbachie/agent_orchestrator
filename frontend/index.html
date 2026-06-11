@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Orchestrator</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Agent Orchestrator</h1>
+      <p class="subtitle">Descreva seu projeto e gere CLAUDE.md, agentes e hooks automaticamente.</p>
+    </header>
+
+    <form id="form-analyze">
+      <div class="field">
+        <label for="descricao">Descrição do projeto</label>
+        <textarea
+          id="descricao"
+          name="descricao"
+          rows="8"
+          placeholder="Ex: API REST em FastAPI que processa pagamentos via Stripe, usa PostgreSQL e precisa de fila de tarefas com Celery..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label for="pasta">Pasta de destino</label>
+        <div class="input-group">
+          <input
+            type="text"
+            id="pasta"
+            name="pasta"
+            placeholder="C:\Users\brend\projetos\meu-projeto"
+            required
+          />
+          <button type="button" id="btn-browse" class="btn-browse">Escolher</button>
+        </div>
+      </div>
+
+      <button type="submit" id="btn-analisar">Analisar</button>
+    </form>
+
+    <div id="status" class="status hidden"></div>
+
+    <section id="section-agents" class="section">
+      <h2 class="section-title">Agentes disponíveis</h2>
+      <p class="section-desc">Marque para fixar — serão incluídos automaticamente em todo novo projeto.</p>
+      <div id="agents-grid" class="agents-grid">
+        <p class="hint">Carregando...</p>
+      </div>
+    </section>
+
+    <section id="section-history" class="section hidden">
+      <h2 class="section-title">Projetos criados</h2>
+      <ul id="projects-list" class="projects-list"></ul>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

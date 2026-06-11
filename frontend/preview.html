@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preview — Agent Orchestrator</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Revisar proposta</h1>
+      <p class="subtitle">Edite os arquivos antes de gerar o projeto.</p>
+    </header>
+
+    <section class="section">
+      <h2 class="section-title">CLAUDE.md</h2>
+      <textarea id="claude-md" class="code-area" rows="20" spellcheck="false"></textarea>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Agentes</h2>
+      <div id="agentes-list" class="card-list"></div>
+      <button type="button" class="btn-add" id="btn-add-agente">+ Adicionar agente</button>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Hooks</h2>
+      <div id="hooks-list" class="card-list"></div>
+      <button type="button" class="btn-add" id="btn-add-hook">+ Adicionar hook</button>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Primeiro prompt</h2>
+      <textarea id="primeiro-prompt" class="code-area" rows="5" spellcheck="false"></textarea>
+    </section>
+
+    <div id="status" class="status hidden"></div>
+
+    <div class="actions">
+      <button type="button" id="btn-voltar" class="btn-secondary">Voltar</button>
+      <button type="button" id="btn-gerar" class="btn-primary">Gerar projeto</button>
+    </div>
+  </main>
+
+  <script src="/static/preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+#form-analyze {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+textarea,
+input[type="text"] {
+  background: #1e2330;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+textarea:focus,
+input[type="text"]:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+textarea::placeholder,
+input[type="text"]::placeholder {
+  color: #4a5568;
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-group input {
+  flex: 1;
+}
+
+.btn-browse {
+  background: #1e2330;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0 1rem;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-browse:hover {
+  border-color: #6366f1;
+  color: #e2e8f0;
+}
+
+.btn-browse:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button[type="submit"] {
+  align-self: flex-start;
+  background: #6366f1;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.65rem 1.75rem;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+button[type="submit"]:hover {
+  background: #4f51d8;
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.status {
+  border-radius: 8px;
+  font-size: 0.9rem;
+  padding: 0.9rem 1rem;
+}
+
+.status.hidden {
+  display: none;
+}
+
+.status.loading {
+  background: #1e2330;
+  border: 1px solid #2d3748;
+  color: #94a3b8;
+}
+
+.status.error {
+  background: #2d1b1b;
+  border: 1px solid #7f1d1d;
+  color: #fca5a5;
+}
+
+/* ── Preview page ───────────────────────────────────────────────────────── */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  letter-spacing: -0.01em;
+}
+
+.code-area {
+  background: #1e2330;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.code-area:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  background: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.card-header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.field-inline {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.field-inline label {
+  white-space: nowrap;
+}
+
+.field-inline input,
+.field-inline select {
+  background: #0f1117;
+  border: 1px solid #2d3748;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.field-inline input:focus,
+.field-inline select:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+.badge {
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.badge-lib {
+  background: #1e3a5f;
+  color: #60a5fa;
+}
+
+.badge-novo {
+  background: #1e3a2f;
+  color: #4ade80;
+}
+
+.hint {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.btn-remove {
+  background: transparent;
+  border: 1px solid #3d2b2b;
+  border-radius: 6px;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  margin-left: auto;
+  padding: 0.2rem 0.55rem;
+  transition: background 0.15s;
+}
+
+.btn-remove:hover {
+  background: #3d2b2b;
+}
+
+.btn-add {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px dashed #374151;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-add:hover {
+  border-color: #6366f1;
+  color: #a5b4fc;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-bottom: 2rem;
+}
+
+.btn-primary {
+  background: #6366f1;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.65rem 1.75rem;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn-primary:hover {
+  background: #4f51d8;
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.65rem 1.25rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-secondary:hover {
+  border-color: #6b7280;
+  color: #cbd5e1;
+}
+
+/* ── Generating page ────────────────────────────────────────────────────── */
+
+.files-list {
+  background: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  overflow: hidden;
+}
+
+.file-item {
+  border-bottom: 1px solid #2d3748;
+  color: #94a3b8;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  padding: 0.55rem 1rem;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+/* ── Agents library (index page) ───────────────────────────────────────── */
+
+.section-desc {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.agents-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.agent-card {
+  align-items: center;
+  background: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.agent-card:hover {
+  border-color: #4a5568;
+}
+
+.agent-card.is-pinned {
+  background: #181d30;
+  border-color: #6366f1;
+}
+
+.agent-pin-chk {
+  accent-color: #6366f1;
+  flex-shrink: 0;
+  height: 1rem;
+  width: 1rem;
+}
+
+.agent-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.agent-name {
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.83rem;
+  font-weight: 500;
+}
+
+.agent-desc {
+  color: #64748b;
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge-pin {
+  background: #2d1f5e;
+  color: #a5b4fc;
+}
+
+/* ── Project history (index page) ──────────────────────────────────────── */
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  background: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.project-item {
+  border-bottom: 1px solid #2d3748;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+}
+
+.project-item:last-child {
+  border-bottom: none;
+}
+
+.project-path {
+  color: #e2e8f0;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.83rem;
+}
+
+.project-meta {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+/* ── Generating page ────────────────────────────────────────────────────── */
+
+.prompt-box {
+  background: #1a1f2e;
+  border: 1px solid #2d3748;
+  border-radius: 10px;
+  color: #a5b4fc;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  padding: 1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projeto gerado — Agent Orchestrator</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Projeto gerado</h1>
+      <p class="subtitle" id="pasta-path"></p>
+    </header>
+
+    <section class="section" id="section-files">
+      <h2 class="section-title">Arquivos criados</h2>
+      <ul id="files-list" class="files-list"></ul>
+    </section>
+
+    <section class="section" id="section-prompt">
+      <h2 class="section-title">Primeiro prompt enviado ao Claude Code</h2>
+      <pre id="primeiro-prompt" class="prompt-box"></pre>
+    </section>
+
+    <div id="launch-warning" class="status error hidden"></div>
+
+    <div class="actions">
+      <button type="button" id="btn-novo" class="btn-primary">Novo projeto</button>
+    </div>
+  </main>
+
+  <script src="/static/generating.js"></script>
+</body>
+</html>

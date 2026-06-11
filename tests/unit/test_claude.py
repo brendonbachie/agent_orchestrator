@@ -1,0 +1,91 @@
+import subprocess
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from utils.claude import ClaudeError, run_prompt
+
+
+def _proc(stdout="", returncode=0, stderr=""):
+    r = MagicMock()
+    r.stdout = stdout
+    r.returncode = returncode
+    r.stderr = stderr
+    return r
+
+
+def test_run_prompt_returns_parsed_json():
+    with patch("subprocess.run", return_value=_proc('{"key": "value"}')):
+        result = run_prompt("test prompt")
+    assert result == {"key": "value"}
+
+
+def test_strips_markdown_fences_json_tag():
+    with patch("subprocess.run", return_value=_proc('```json\n{"a": 1}\n```')):
+        assert run_prompt("test") == {"a": 1}
+
+
+def test_strips_markdown_fences_no_tag():
+    with patch("subprocess.run", return_value=_proc('```\n{"b": 2}\n```')):
+        assert run_prompt("test") == {"b": 2}
+
+
+def test_strips_fences_without_closing():
+    with patch("subprocess.run", return_value=_proc('```json\n{"c": 3}')):
+        assert run_prompt("test") == {"c": 3}
+
+
+def test_prose_before_and_after_json():
+    out = 'Aqui está o JSON: {"key": "value"} Espero que ajude!'
+    with patch("subprocess.run", return_value=_proc(out)):
+        assert run_prompt("test") == {"key": "value"}
+
+
+def test_nested_json_followed_by_text():
+    out = '{"a": {"b": [1, 2], "c": "x}y"}} obrigado pela atenção'
+    with patch("subprocess.run", return_value=_proc(out)):
+        assert run_prompt("test") == {"a": {"b": [1, 2], "c": "x}y"}}
+
+
+def test_fence_with_prose_outside():
+    out = 'Segue o resultado:\n```json\n{"d": 4}\n```\nQualquer dúvida, avise!'
+    with patch("subprocess.run", return_value=_proc(out)):
+        assert run_prompt("test") == {"d": 4}
+
+
+def test_raises_when_output_is_json_list():
+    with patch("subprocess.run", return_value=_proc("[1, 2, 3]")):
+        with pytest.raises(ClaudeError, match="expected an object"):
+            run_prompt("test")
+
+
+def test_raises_on_empty_output():
+    with patch("subprocess.run", return_value=_proc("")):
+        with pytest.raises(ClaudeError, match="non-JSON"):
+            run_prompt("test")
+
+
+def test_raises_on_nonzero_exit():
+    with patch("subprocess.run", return_value=_proc("", returncode=1, stderr="bad")):
+        with pytest.raises(ClaudeError, match="exited 1"):
+            run_prompt("test")
+
+
+def test_raises_on_invalid_json():
+    with patch("subprocess.run", return_value=_proc("not json at all")):
+        with pytest.raises(ClaudeError, match="non-JSON"):
+            run_prompt("test")
+
+
+def test_raises_when_claude_not_found():
+    with patch("subprocess.run", side_effect=FileNotFoundError()):
+        with pytest.raises(ClaudeError, match="not found"):
+            run_prompt("test")
+
+
+def test_raises_on_timeout():
+    with patch(
+        "subprocess.run", side_effect=subprocess.TimeoutExpired("claude", 60)
+    ):
+        with pytest.raises(ClaudeError, match="timed out"):
+            run_prompt("test")
