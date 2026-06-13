@@ -29,7 +29,7 @@ async def generate_endpoint(req: GenerateRequest) -> dict:
     pasta_wsl = to_wsl_path(req.pasta)
     try:
         files = builder.build(
-            req.claude_md, req.agentes, req.hooks, req.primeiro_prompt, req.plano, req.skills
+            req.claude_md, req.agentes, req.hooks, req.primeiro_prompt, req.plano
         )
         if not req.sobrescrever:
             conflitos = await asyncio.to_thread(writer.check_conflicts, files, pasta_write)
