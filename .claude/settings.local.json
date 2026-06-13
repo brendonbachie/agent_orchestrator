@@ -57,7 +57,8 @@
       "Bash(python -m ruff check core/ api/ tests/)",
       "Bash(python -m mypy core/analyzer.py core/builder.py core/dispatcher.py)",
       "Bash(echo \"---exit:$?---\")",
-      "Bash(python evals/skill_selection.py)"
+      "Bash(python evals/skill_selection.py)",
+      "Bash(python evals/cost_monolito_vs_dispatcher.py)"
     ]
   }
 }
