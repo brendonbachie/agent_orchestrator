@@ -295,12 +295,16 @@ def analyze(descricao: str) -> dict[str, object]:
             _PROMPT_2.format(
                 analise=json.dumps(analise.model_dump(), ensure_ascii=False),
                 lista_templates=json.dumps(templates, ensure_ascii=False),
+                lista_skills=json.dumps(skills_lib, ensure_ascii=False),
             ),
             timeout=180,
             model="opus",
         ),
         "agentes",
     )
+
+    # Só nomes que existem de fato na biblioteca entram — não inventamos skills.
+    skills_escolhidas = [s for s in agentes.skills if s in skills_disponiveis]
 
     resultado = _validar(
         _Resultado,
