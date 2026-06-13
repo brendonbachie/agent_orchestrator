@@ -19,6 +19,29 @@ class ClaudeNotFound(ClaudeError):
     """CLI ausente — não adianta repetir."""
 
 
+_ALLOWED_MODELS = {"sonnet", "opus", "haiku"}
+
+
+def _safe_model(model: str | None) -> str | None:
+    """Normaliza/valida o id de modelo antes de virar o argv ``--model``.
+
+    Defesa contra *argument injection*: o ``modelo`` de cada task do plano é
+    gerado pelo LLM (Prompt 3) e cai direto em ``--model <valor>``. Um valor
+    começando com ``-`` (ex.: ``--dangerously-skip-permissions``) jamais pode
+    chegar ao CLI como flag. Só passam tiers conhecidos; ``"free"`` (tier do
+    roadmap #12, ainda sem roteamento) cai no tier real mais barato (sonnet) em
+    vez de quebrar a chamada com um ``--model free`` inexistente.
+    """
+    if model is None:
+        return None
+    m = model.strip().lower()
+    if m == "free":
+        return "sonnet"
+    if m not in _ALLOWED_MODELS:
+        raise ClaudeError(f"modelo não permitido: {model!r}")
+    return m
+
+
 def _neutral_cwd() -> str:
     """Pasta vazia de onde rodar o `claude -p`.
 
