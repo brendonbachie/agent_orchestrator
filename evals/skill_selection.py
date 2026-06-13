@@ -22,6 +22,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# No Windows o stdout vira cp1252 quando redirecionado a arquivo e quebra em ✓/✗/—.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 from core.analyzer import analyze  # noqa: E402
 
 # tipo: "dev" = projeto de software (espera selecionar as relevantes)
