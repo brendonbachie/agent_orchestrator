@@ -16,6 +16,7 @@ router = APIRouter()
 class DispatchRequest(BaseModel):
     pasta: str
     plano: list[dict]
+    skills: list[str] = []
     verificar: bool = True
 
 
