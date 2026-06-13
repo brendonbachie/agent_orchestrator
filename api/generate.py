@@ -18,7 +18,6 @@ class GenerateRequest(BaseModel):
     hooks: list[dict]
     primeiro_prompt: str
     plano: list[dict] = []
-    skills: list[str] = []
     sobrescrever: bool = False
 
 
