@@ -154,8 +154,11 @@ def run_task(prompt: str, model: str, cwd: str, timeout: int = 1800) -> dict[str
     uso de tokens, sem exigir JSON no conteúdo. É o runner de produção do dispatcher;
     cada task é uma sessão separada → contexto isolado.
     """
+    cwd = os.path.abspath(cwd)
+    if not os.path.isdir(cwd):
+        raise ClaudeError(f"cwd inválido (não é um diretório): {cwd}")
     cmd = list(_CLAUDE_CMD) + [
-        "--model", model,
+        "--model", _safe_model(model) or "sonnet",
         "--permission-mode", "acceptEdits",
         "--output-format", "json",
     ]
