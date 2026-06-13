@@ -58,3 +58,33 @@ def test_dispatch_gate_registra_resultado():
         gate=lambda pasta: True,
     )
     assert res[0]["testes_ok"] is True
+
+
+# ── Injeção forçada de skills no prompt da task (Passo 3) ─────────────────────
+
+
+def test_prompt_inclui_skills_quando_passadas():
+    p = prompt_da_task({"task": "x"}, [], skills=["systematic-debugging"])
+    assert "systematic-debugging" in p
+    assert ".claude/skills/" in p
+
+
+def test_prompt_sem_skills_nao_menciona_skills():
+    p = prompt_da_task({"task": "x"}, [])
+    assert ".claude/skills/" not in p
+
+
+def test_dispatch_injeta_skills_no_prompt():
+    prompts = []
+
+    def runner(prompt, model, cwd):
+        prompts.append(prompt)
+        return {"ok": True}
+
+    dispatch(
+        [{"ordem": 1, "task": "x", "modelo": "sonnet"}],
+        "/p",
+        runner,
+        skills=["systematic-debugging"],
+    )
+    assert "systematic-debugging" in prompts[0]
