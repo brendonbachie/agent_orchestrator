@@ -48,7 +48,11 @@
       "Bash(echo \"EXIT: $?\")",
       "Bash(claude -p '{\"test\":true}')",
       "Read(//root/.claude/**)",
-      "Bash(/mnt/c/Windows/System32/wsl.exe *)"
+      "Bash(/mnt/c/Windows/System32/wsl.exe *)",
+      "Bash(python -m ruff check utils/claude.py tests/unit/test_claude.py)",
+      "Bash(python -m mypy utils/claude.py)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
