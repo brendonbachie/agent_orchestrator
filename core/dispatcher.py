@@ -92,17 +92,19 @@ def dispatch(
     pasta: str,
     runner: Runner,
     gate: Gate | None = None,
+    skills: list[str] | None = None,
 ) -> list[dict]:
     """Executa cada task em ordem topológica via ``runner``; ``gate`` opcional após cada uma.
 
     Retorna uma lista de resultados por task (ordem, task, modelo, agente + o que o
-    runner devolver, e ``testes_ok`` se houver gate).
+    runner devolver, e ``testes_ok`` se houver gate). ``skills`` (instaladas no
+    projeto) são injetadas em cada prompt de task.
     """
     feitas: list[dict] = []
     resultados: list[dict] = []
     for task in ordenar(plano):
         modelo = task.get("modelo") or "sonnet"
-        res = runner(prompt_da_task(task, feitas), modelo, pasta)
+        res = runner(prompt_da_task(task, feitas, skills), modelo, pasta)
         entrada: dict = {
             "ordem": task.get("ordem"),
             "task": task.get("task", ""),
