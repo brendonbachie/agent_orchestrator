@@ -91,13 +91,17 @@ def _extract_json(raw: str) -> object:
 
 def _run_once(prompt: str, timeout: int, model: str | None) -> dict[str, object]:
     cmd = list(_CLAUDE_CMD)
-    if model:
-        cmd += ["--model", model]
+    safe = _safe_model(model)
+    if safe:
+        cmd += ["--model", safe]
     try:
+        # O prompt vai por stdin, nunca como argv: assim um prompt começando com
+        # `-` (montado a partir da descrição do usuário) jamais é lido como flag
+        # do CLI (argument injection).
         result = subprocess.run(
-            cmd + [prompt],
+            cmd,
+            input=prompt,
             capture_output=True,
-            stdin=subprocess.DEVNULL,
             cwd=_neutral_cwd(),
             timeout=timeout,
             encoding="utf-8",
