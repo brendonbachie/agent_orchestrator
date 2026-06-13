@@ -146,7 +146,6 @@ function collect() {
     hooks,
     primeiro_prompt: document.getElementById('primeiro-prompt').value,
     plano: proposta.plano ?? [],
-    skills: proposta.skills ?? [],
   };
 }
 
