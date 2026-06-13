@@ -58,7 +58,8 @@
       "Bash(python -m mypy core/analyzer.py core/builder.py core/dispatcher.py)",
       "Bash(echo \"---exit:$?---\")",
       "Bash(python evals/skill_selection.py)",
-      "Bash(python evals/cost_monolito_vs_dispatcher.py)"
+      "Bash(python evals/cost_monolito_vs_dispatcher.py)",
+      "Bash(python evals/cost_quality_1k.py)"
     ]
   }
 }
