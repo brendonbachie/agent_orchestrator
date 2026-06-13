@@ -55,7 +55,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(python -m pytest tests/ -q)",
       "Bash(python -m ruff check core/ api/ tests/)",
-      "Bash(python -m mypy core/analyzer.py core/builder.py core/dispatcher.py)"
+      "Bash(python -m mypy core/analyzer.py core/builder.py core/dispatcher.py)",
+      "Bash(echo \"---exit:$?---\")"
     ]
   }
 }
