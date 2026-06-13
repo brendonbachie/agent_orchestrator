@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 
 _TEMPLATES_DIR = Path(__file__).parent.parent / "templates" / "agents"
+_SKILLS_DIR = Path(__file__).parent.parent / "templates" / "skills"
 _VALID_NAME = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 
