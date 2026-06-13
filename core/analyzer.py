@@ -269,9 +269,12 @@ def _recomendacao(analise: _Analise) -> dict[str, object]:
 
 def analyze(descricao: str) -> dict[str, object]:
     templates = _list_templates()
+    skills_lib = _list_skills()
+    skills_disponiveis = {s["name"] for s in skills_lib}
 
-    # Mesma descrição + biblioteca → reusa o resultado, sem gastar tokens de novo.
-    chave = cache_key(descricao, templates)
+    # Mesma descrição + biblioteca (agentes E skills) → reusa o resultado sem gastar
+    # tokens; adicionar/remover uma skill invalida o cache.
+    chave = cache_key(descricao, templates + [f"skill:{n}" for n in sorted(skills_disponiveis)])
     em_cache = cache_get(chave)
     if em_cache is not None:
         return em_cache
