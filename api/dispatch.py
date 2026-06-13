@@ -32,7 +32,7 @@ async def dispatch_endpoint(req: DispatchRequest) -> StreamingResponse:
             modelo = task.get("modelo") or "sonnet"
             try:
                 res = await asyncio.to_thread(
-                    run_task, prompt_da_task(task, feitas), modelo, req.pasta
+                    run_task, prompt_da_task(task, feitas, req.skills), modelo, req.pasta
                 )
             except Exception as e:  # uma task ruim não derruba o stream
                 res = {"ok": False, "erro": str(e)}
