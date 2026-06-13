@@ -4,19 +4,42 @@ Nota: o subprocess aqui invoca Python/tkinter (diálogo nativo do SO),
 não o Claude Code — por isso este módulo não passa por `utils/claude.py`.
 """
 
+import glob
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 
 _ON_WINDOWS = sys.platform == "win32"
 
-# Quando rodando no WSL, usa o Python do Windows para abrir o diálogo nativo.
-_PYWIN = (
-    sys.executable
-    if _ON_WINDOWS
-    else "/mnt/c/Users/brend/AppData/Local/Programs/Python/Python310/python.exe"
-)
+
+def _windows_python() -> str:
+    """Localiza o Python do Windows para abrir o diálogo tkinter.
+
+    Em Windows, usa o próprio interpretador. No WSL, procura o Python do Windows
+    (no PATH ou nos diretórios de instalação comuns), em vez de um caminho cravado.
+    """
+    if _ON_WINDOWS:
+        return sys.executable
+    for cand in ("py.exe", "python.exe", "python3.exe"):
+        encontrado = shutil.which(cand)
+        if encontrado:
+            return encontrado
+    padroes = [
+        "/mnt/c/Users/*/AppData/Local/Programs/Python/Python3*/python.exe",
+        "/mnt/c/Users/*/AppData/Local/Microsoft/WindowsApps/python3*.exe",
+        "/mnt/c/Program Files/Python3*/python.exe",
+        "/mnt/c/Python3*/python.exe",
+    ]
+    for padrao in padroes:
+        achados = sorted(glob.glob(padrao))
+        if achados:
+            return achados[-1]  # versão mais recente
+    return "python.exe"  # fallback: espera estar no PATH
+
+
+_PYWIN = _windows_python()
 
 # Tempo máximo (segundos) que o diálogo pode ficar aberto.
 _TIMEOUT = 120

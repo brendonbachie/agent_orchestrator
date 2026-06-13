@@ -4,6 +4,18 @@ if (!proposta) {
   window.location.href = '/';
 }
 
+// ── Recomendação (vale orquestrar?) ──────────────────────────────────────────
+
+if (proposta.recomendacao && proposta.recomendacao.orquestrar === false) {
+  const banner = document.createElement('div');
+  banner.style.cssText =
+    'background:#fef3cd;border:1px solid #e0c97f;color:#664d03;' +
+    'padding:12px 16px;border-radius:8px;margin-bottom:1rem;line-height:1.5;';
+  banner.textContent = '⚠ ' + proposta.recomendacao.motivo;
+  const main = document.querySelector('main.container') || document.body;
+  main.insertBefore(banner, main.firstChild);
+}
+
 // ── Populate fields ──────────────────────────────────────────────────────────
 
 document.getElementById('claude-md').value = proposta.claude_md ?? '';
@@ -133,6 +145,7 @@ function collect() {
     agentes,
     hooks,
     primeiro_prompt: document.getElementById('primeiro-prompt').value,
+    plano: proposta.plano ?? [],
   };
 }
 

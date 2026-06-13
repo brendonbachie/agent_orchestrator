@@ -107,9 +107,40 @@ com o conteúdo completo.
 `writer.py` recebe essas strings e escreve os arquivos. Facilita testes e
 permite o preview editável antes de gerar.
 
-**Outputs sempre em JSON.**
+**Outputs sempre em JSON, validados por schema.**
 Todo prompt ao Claude pede resposta em JSON puro — sem markdown, sem explicação.
-O `claude.py` faz o parse e lança exceção se não conseguir.
+O `claude.py` faz o parse e lança exceção se não conseguir. O `analyzer.py` ainda
+valida cada resposta contra um schema Pydantic (`_Analise`, `_AgentesResult`,
+`_Resultado`); chave faltando ou tipo errado vira `ClaudeError` (502) com mensagem
+clara, em vez de estourar lá na frente.
+
+**Persistência com escrita atômica.**
+`storage.py` grava `projetos.json` via arquivo temporário + `os.replace`, sob um
+`threading.Lock` — sem janela de corrupção e sem lost update entre requisições
+concorrentes (os endpoints chamam `save_project` via `asyncio.to_thread`).
+
+**Custo de geração contido.**
+A geração não pode custar mais tokens do que o projeto economiza. Três medidas:
+1. **cwd neutro** — `claude.py` roda o `claude -p` de uma pasta vazia
+   (`_neutral_cwd`), senão cada chamada herdaria a pasta do orquestrador e
+   carregaria o CLAUDE.md de 8KB dele (medido: ~+4,5k tokens/chamada).
+2. **Modelo por etapa** — só a análise (Prompt 1, classificação pura) usa
+   `sonnet`; a criação de agentes (Prompt 2) e o artefato final (Prompt 3) usam
+   `opus`. Medimos que o Sonnet gera agentes sem frontmatter YAML e em inglês —
+   o que quebra a delegação e anula a economia posterior. Ver `run_prompt(model=...)`.
+3. **Cache por hash** — `utils/analysis_cache.py` guarda o resultado por
+   `hash(descrição + templates)`; gerar a mesma descrição de novo custa zero.
+
+**Dispatcher só vale para projeto grande (gate de complexidade).**
+`analyze()` retorna `recomendacao` (`orquestrar` true/false) por heurística do nº de
+áreas de especialização. `core/dispatcher.py` executa o `plano` task a task, cada
+uma em sessão `claude -p` isolada (`utils.claude.run_task`) no modelo do tier — isso
+força o isolamento de contexto que o prompt sozinho não garante. MAS medimos: em
+projeto pequeno o dispatcher custa MAIS (3 sessões frias pagam 3× o boot, sem acúmulo
+para economizar; calculadora/mini-tarefas ~4× pior). O ganho só aparece em projeto
+grande (chamados ~15M tokens). Por isso o frontend só oferece o dispatcher quando
+`recomendacao.orquestrar=true`; em projeto simples avisa e pede confirmação. Ganho
+sempre-ligado, independente de tamanho = o pin de Sonnet no build.
 
 ---
 

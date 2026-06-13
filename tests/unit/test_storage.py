@@ -48,6 +48,22 @@ def test_list_projects_non_list_json_returns_empty(tmp_store):
     assert list_projects() == []
 
 
+def test_save_leaves_no_tmp_residue(tmp_store):
+    save_project("/p", [], "x")
+    assert list(tmp_store.parent.glob("*.tmp")) == []
+
+
+def test_failed_replace_preserves_existing_file(tmp_store):
+    save_project("/first", [], "x")
+    original = tmp_store.read_text(encoding="utf-8")
+    with patch("utils.storage.os.replace", side_effect=OSError("boom")):
+        with pytest.raises(OSError):
+            save_project("/second", [], "y")
+    # arquivo antigo intacto e sem resíduo .tmp
+    assert tmp_store.read_text(encoding="utf-8") == original
+    assert list(tmp_store.parent.glob("*.tmp")) == []
+
+
 def test_save_creates_data_dir(tmp_store, tmp_path):
     nested = tmp_path / "sub" / "dir"
     data_file = nested / "projetos.json"

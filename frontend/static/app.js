@@ -97,12 +97,47 @@ async function loadProjects() {
       li.innerHTML = `
         <span class="project-path">${escHtml(p.pasta)}</span>
         <span class="project-meta">${p.files.length} arquivo${p.files.length !== 1 ? 's' : ''} · ${date}</span>
+        <button type="button" class="btn-usage">ver consumo do build</button>
+        <span class="usage-result hint"></span>
       `;
+      const btnUsage = li.querySelector('.btn-usage');
+      const out = li.querySelector('.usage-result');
+      btnUsage.addEventListener('click', () => loadUsage(p.pasta, btnUsage, out));
       list.appendChild(li);
     });
   } catch (_) {
     // silently ignore — history is non-critical
   }
+}
+
+async function loadUsage(pasta, btn, out) {
+  btn.disabled = true;
+  out.textContent = 'lendo transcript do build...';
+  try {
+    const res = await fetch(`/usage?pasta=${encodeURIComponent(pasta)}`);
+    const u = await res.json();
+    if (!u.encontrado) {
+      out.textContent = 'sem sessão de build registrada ainda — abra o Claude Code no projeto.';
+    } else {
+      const novo = u.input_fresco + u.cache_creation + u.output;
+      const custo = u.custo_usd ? ` · <strong>~$${u.custo_usd}</strong>` : '';
+      const modelos = (u.modelos && u.modelos.length)
+        ? ` <span class="hint">(${u.modelos.join(', ')})</span>` : '';
+      out.innerHTML =
+        `<strong>${fmt(u.total)}</strong> tokens no build${custo}${modelos} · ` +
+        `novo (gerado): <strong>${fmt(novo)}</strong> · ` +
+        `releitura de contexto: ${fmt(u.cache_read)} <span class="hint">(~10× mais barata)</span> · ` +
+        `${u.mensagens} mensagens`;
+    }
+  } catch (_) {
+    out.textContent = 'erro ao ler o consumo.';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function fmt(n) {
+  return Number(n).toLocaleString('pt-BR');
 }
 
 loadProjects();

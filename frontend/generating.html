@@ -25,6 +25,14 @@
 
     <div id="launch-warning" class="status error hidden"></div>
 
+    <section class="section hidden" id="section-dispatch">
+      <h2 class="section-title">Executar plano (dispatcher)</h2>
+      <p class="section-desc">Roda o plano task a task — cada uma em contexto isolado e no modelo do seu tier, em vez de uma sessão única. Pode levar alguns minutos.</p>
+      <button type="button" id="btn-dispatch" class="btn-primary">Executar plano</button>
+      <div id="dispatch-status" class="status hidden"></div>
+      <ul id="dispatch-results" class="files-list"></ul>
+    </section>
+
     <div class="actions">
       <button type="button" id="btn-novo" class="btn-primary">Novo projeto</button>
     </div>

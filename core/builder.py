@@ -9,8 +9,11 @@ _VALID_NAME = re.compile(r"^[a-zA-Z0-9_-]+$")
 _LAUNCH_SCRIPT = """\
 #!/usr/bin/env bash
 # Abre o Claude Code no projeto com o primeiro prompt gerado pelo orquestrador.
+# --model sonnet: o build roda no modelo barato (medimos ~5x vs Opus). O trabalho
+# pesado vai para subagentes (que podem ter model próprio no frontmatter); para
+# decisões realmente difíceis, suba com /model dentro da sessão.
 cd "$(dirname "$0")/.." || exit 1
-claude "$(cat .claude/primeiro-prompt.txt)"
+claude --model sonnet "$(cat .claude/primeiro-prompt.txt)"
 """
 
 
@@ -19,6 +22,7 @@ def build(
     agentes: list[dict],
     hooks: list[dict],
     primeiro_prompt: str | None = None,
+    plano: list[dict] | None = None,
 ) -> dict[str, str]:
     """Return {relative_path: content} for every file to be written to the project."""
     files: dict[str, str] = {}
@@ -26,6 +30,9 @@ def build(
     if primeiro_prompt:
         files[".claude/primeiro-prompt.txt"] = primeiro_prompt
         files[".claude/launch.sh"] = _LAUNCH_SCRIPT
+
+    if plano:
+        files[".claude/plano-build.md"] = _plano_md(plano)
 
     agent_files: list[tuple[str, str]] = []
     for agent in agentes:
@@ -64,6 +71,27 @@ def build(
         )
 
     return files
+
+
+def _plano_md(plano: list[dict]) -> str:
+    """Formata o plano de tasks como `.claude/plano-build.md` para o build seguir."""
+    linhas = [
+        "# Plano de build",
+        "",
+        "Construa nesta ordem. Task pesada/especializada → abra um subagente (Task).",
+        "O tier indica o modelo: free=mecânico, sonnet=padrão, opus=crítico.",
+        "",
+    ]
+    for t in plano:
+        linhas.append(f"## {t.get('ordem', '?')}. {t.get('task', '')}")
+        linhas.append(f"- agente: {t.get('agente') or '—'} · modelo: {t.get('modelo', 'sonnet')}")
+        if t.get("contrato"):
+            linhas.append(f"- contrato: {t['contrato']}")
+        deps = t.get("depende_de") or []
+        if deps:
+            linhas.append(f"- depende de: {', '.join(str(d) for d in deps)}")
+        linhas.append("")
+    return "\n".join(linhas)
 
 
 def _ensure_agents_section(claude_md: str, agent_files: list[tuple[str, str]]) -> str:

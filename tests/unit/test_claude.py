@@ -1,9 +1,10 @@
+import json
 import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from utils.claude import ClaudeError, run_prompt
+from utils.claude import ClaudeError, run_prompt, run_task
 
 
 def _proc(stdout="", returncode=0, stderr=""):
@@ -89,3 +90,24 @@ def test_raises_on_timeout():
     ):
         with pytest.raises(ClaudeError, match="timed out"):
             run_prompt("test")
+
+
+# ── run_task (runner do dispatcher) ──────────────────────────────────────────
+
+
+def test_run_task_returns_usage_and_cost():
+    envelope = json.dumps(
+        {"is_error": False, "usage": {"output_tokens": 5}, "total_cost_usd": 0.01, "num_turns": 3}
+    )
+    with patch("subprocess.run", return_value=_proc(envelope)):
+        r = run_task("faça X", "sonnet", "/proj")
+    assert r["ok"] is True
+    assert r["usage"]["output_tokens"] == 5
+    assert r["cost_usd"] == 0.01
+    assert r["num_turns"] == 3
+
+
+def test_run_task_raises_on_nonzero_exit():
+    with patch("subprocess.run", return_value=_proc("", returncode=1, stderr="boom")):
+        with pytest.raises(ClaudeError, match="exited 1"):
+            run_task("x", "sonnet", "/proj")

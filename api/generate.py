@@ -1,5 +1,4 @@
 import asyncio
-import re
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -7,18 +6,9 @@ from pydantic import BaseModel
 from core import builder, launcher, writer
 from utils import storage
 from utils.agents_store import save_agents_from_files
+from utils.claude_sessions import to_wsl_path
 
 router = APIRouter()
-
-
-def _to_wsl_path(path: str) -> str:
-    """Convert a Windows path (C:\foo\bar) to its WSL mount path (/mnt/c/foo/bar)."""
-    m = re.match(r"^([A-Za-z]):[/\\](.*)", path)
-    if not m:
-        return path
-    drive = m.group(1).lower()
-    rest = m.group(2).replace("\\", "/")
-    return f"/mnt/{drive}/{rest}"
 
 
 class GenerateRequest(BaseModel):
@@ -27,6 +17,7 @@ class GenerateRequest(BaseModel):
     agentes: list[dict]
     hooks: list[dict]
     primeiro_prompt: str
+    plano: list[dict] = []
     sobrescrever: bool = False
 
 
@@ -35,9 +26,11 @@ async def generate_endpoint(req: GenerateRequest) -> dict:
     # Keep original path for file writing (Windows Python understands Windows paths)
     pasta_write = req.pasta
     # Convert to WSL path only for the launcher (runs inside WSL)
-    pasta_wsl = _to_wsl_path(req.pasta)
+    pasta_wsl = to_wsl_path(req.pasta)
     try:
-        files = builder.build(req.claude_md, req.agentes, req.hooks, req.primeiro_prompt)
+        files = builder.build(
+            req.claude_md, req.agentes, req.hooks, req.primeiro_prompt, req.plano
+        )
         if not req.sobrescrever:
             conflitos = await asyncio.to_thread(writer.check_conflicts, files, pasta_write)
             if conflitos:

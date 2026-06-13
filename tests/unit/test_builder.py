@@ -112,6 +112,25 @@ def test_no_primeiro_prompt_no_launch_files():
     assert ".claude/launch.sh" not in files
 
 
+def test_plano_writes_build_file():
+    plano = [
+        {"ordem": 1, "task": "modelo de dados", "agente": None, "modelo": "opus",
+         "contrato": "dataclass Chamado", "depende_de": []},
+        {"ordem": 2, "task": "triagem bancos", "agente": "triagem-bancos",
+         "modelo": "sonnet", "contrato": "", "depende_de": [1]},
+    ]
+    files = build("# md", [], [], "prompt", plano)
+    conteudo = files[".claude/plano-build.md"]
+    assert "modelo de dados" in conteudo
+    assert "triagem-bancos" in conteudo
+    assert "depende de: 1" in conteudo
+
+
+def test_no_plano_no_build_file():
+    files = build("# md", [], [], "prompt")
+    assert ".claude/plano-build.md" not in files
+
+
 def test_no_hooks_no_settings_json():
     files = build("# md", [], [])
     assert ".claude/settings.json" not in files
