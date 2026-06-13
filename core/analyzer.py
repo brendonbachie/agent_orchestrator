@@ -142,7 +142,6 @@ class _Agente(BaseModel):
 class _AgentesResult(BaseModel):
     model_config = ConfigDict(extra="ignore")
     agentes: list[_Agente] = []
-    skills: list[str] = []
 
 
 class _Hook(BaseModel):
