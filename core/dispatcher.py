@@ -63,13 +63,6 @@ def prompt_da_task(task: dict, feitas: list[dict]) -> str:
             f"Aplique a especialidade do agente '{agente}' (.claude/agents/{agente}.md); "
             "abra um subagente com ele se ajudar."
         )
-    if skills:
-        nomes = ", ".join(skills)
-        partes.append(
-            f"Skills instaladas em .claude/skills/ ({nomes}): leia o SKILL.md da que "
-            "corresponder à situação e siga-a. Em especial, antes de declarar a task "
-            "concluída, VERIFIQUE de fato (rode os testes e leia a saída)."
-        )
     if feitas:
         nomes = ", ".join(str(t.get("task", ""))[:50] for t in feitas)
         partes.append(f"Já implementado (não refaça): {nomes}")
