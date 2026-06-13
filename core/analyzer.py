@@ -10,7 +10,6 @@ from utils.claude import ClaudeError, run_prompt
 _T = TypeVar("_T", bound=BaseModel)
 
 _TEMPLATES_DIR = Path(__file__).parent.parent / "templates" / "agents"
-_SKILLS_DIR = Path(__file__).parent.parent / "templates" / "skills"
 
 _PROMPT_1 = """Analisa esse projeto e retorna APENAS JSON válido, sem markdown, sem explicação:
 {{

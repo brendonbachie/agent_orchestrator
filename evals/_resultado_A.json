@@ -1,0 +1,66 @@
+{
+  "raw_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\qA-raw-yna5qj8e",
+  "orch_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\qA-orch-rnyvag35",
+  "raw": {
+    "tokens": {
+      "input": 14,
+      "cache_creation": 14236,
+      "cache_read": 247924,
+      "output": 7412
+    },
+    "custo": 0.2718412,
+    "meta": {
+      "ok": true,
+      "turns": 18,
+      "segundos": 99
+    }
+  },
+  "orch": {
+    "tokens": {
+      "input": 90,
+      "cache_creation": 72251,
+      "cache_read": 1644569,
+      "output": 22252
+    },
+    "custo": 1.2647796999999998,
+    "meta": {
+      "n_tasks": 5,
+      "skills": [
+        "systematic-debugging",
+        "verification-before-completion"
+      ],
+      "tasks": [
+        {
+          "ordem": 1,
+          "ok": true,
+          "turns": 18,
+          "segundos": 74
+        },
+        {
+          "ordem": 2,
+          "ok": true,
+          "turns": 22,
+          "segundos": 93
+        },
+        {
+          "ordem": 3,
+          "ok": true,
+          "turns": 16,
+          "segundos": 72
+        },
+        {
+          "ordem": 4,
+          "ok": true,
+          "turns": 13,
+          "segundos": 46
+        },
+        {
+          "ordem": 5,
+          "ok": true,
+          "turns": 23,
+          "segundos": 115
+        }
+      ]
+    }
+  }
+}
