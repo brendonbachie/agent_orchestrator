@@ -76,6 +76,18 @@ CASOS: list[dict] = [
 ]
 
 
+def _analyze_com_retry(descricao: str, tentativas: int = 3, backoff: float = 30.0) -> dict:
+    """analyze() com retry/backoff — absorve throttle transitório de rajada de opus."""
+    for i in range(tentativas):
+        try:
+            return analyze(descricao)
+        except Exception:  # noqa: BLE001
+            if i == tentativas - 1:
+                raise
+            time.sleep(backoff)
+    raise RuntimeError("inalcançável")
+
+
 def rodar() -> None:
     soma_hits = soma_expected = 0
     sobre_selecao = 0  # casos trivial/não-dev que selecionaram algo
@@ -84,10 +96,12 @@ def rodar() -> None:
 
     print(f"\n{'='*78}\nEVAL — Seleção de skills ({len(CASOS)} casos)\n{'='*78}\n")
 
-    for caso in CASOS:
+    for idx, caso in enumerate(CASOS):
+        if idx:
+            time.sleep(10)  # respiro entre casos — reduz pressão de rate-limit
         ini = time.monotonic()
         try:
-            resultado = analyze(caso["descricao"])
+            resultado = _analyze_com_retry(caso["descricao"])
         except Exception as e:  # noqa: BLE001 — eval não pode morrer num caso
             print(f"✗ {caso['id']}: ERRO — {e}\n")
             continue
