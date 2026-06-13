@@ -157,3 +157,24 @@ def _resolve_agent(agent: dict, name: str) -> str | None:
             return template.read_text(encoding="utf-8")
     content = agent.get("conteudo")
     return content if content else None
+
+
+def _skill_files(name: str | None) -> dict[str, str]:
+    """Copia uma skill da biblioteca para `.claude/skills/<nome>/` (todos os arquivos).
+
+    Skill é uma PASTA (SKILL.md + arquivos de apoio). Só nomes que existem na
+    biblioteca entram — não inventamos skills. `_normalize_name` + a exigência de um
+    SKILL.md real barram nome desconhecido e path traversal (ex.: `../../etc`).
+    """
+    safe = _normalize_name(name)
+    if not safe:
+        return {}
+    base = _SKILLS_DIR / safe
+    if not (base / "SKILL.md").is_file():
+        return {}
+    out: dict[str, str] = {}
+    for path in sorted(base.rglob("*")):
+        if path.is_file():
+            rel = path.relative_to(base).as_posix()
+            out[f".claude/skills/{safe}/{rel}"] = path.read_text(encoding="utf-8")
+    return out
