@@ -65,7 +65,7 @@ document.getElementById('btn-dispatch')?.addEventListener('click', async () => {
     const res = await fetch('/dispatch', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pasta: gerado.pasta, plano, skills: proposta?.skills ?? [] }),
+      body: JSON.stringify({ pasta: gerado.pasta, plano }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
