@@ -211,3 +211,29 @@ def test_hook_script_path_referenced_in_settings():
     settings = json.loads(files[".claude/settings.json"])
     command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
     assert ".claude/hooks/" in command
+
+
+# ── Skills da biblioteca → .claude/skills/ (Passo 2) ─────────────────────────
+
+
+def test_skill_copied_from_library():
+    files = build("# md", [], [], skills=["systematic-debugging"])
+    assert ".claude/skills/systematic-debugging/SKILL.md" in files
+    # arquivos de apoio da skill também são copiados
+    assert ".claude/skills/systematic-debugging/root-cause-tracing.md" in files
+    assert "systematic-debugging" in files[".claude/skills/systematic-debugging/SKILL.md"]
+
+
+def test_unknown_skill_ignored():
+    files = build("# md", [], [], skills=["skill-que-nao-existe"])
+    assert not any(k.startswith(".claude/skills/") for k in files)
+
+
+def test_skill_name_traversal_ignored():
+    files = build("# md", [], [], skills=["../../etc"])
+    assert not any(k.startswith(".claude/skills/") for k in files)
+
+
+def test_no_skills_no_skill_files():
+    files = build("# md", [], [])
+    assert not any(k.startswith(".claude/skills/") for k in files)
