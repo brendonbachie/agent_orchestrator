@@ -323,6 +323,7 @@ def analyze(descricao: str) -> dict[str, object]:
     saida: dict[str, object] = {
         "claude_md": resultado.claude_md,
         "agentes": [a.model_dump() for a in agentes.agentes],
+        "skills": skills_escolhidas,
         "hooks": [h.model_dump() for h in resultado.hooks],
         "primeiro_prompt": resultado.primeiro_prompt,
         "plano": [t.model_dump() for t in resultado.plano],
