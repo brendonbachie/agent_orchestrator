@@ -23,7 +23,6 @@ def build(
     hooks: list[dict],
     primeiro_prompt: str | None = None,
     plano: list[dict] | None = None,
-    skills: list[str] | None = None,
 ) -> dict[str, str]:
     """Return {relative_path: content} for every file to be written to the project."""
     files: dict[str, str] = {}
@@ -34,9 +33,6 @@ def build(
 
     if plano:
         files[".claude/plano-build.md"] = _plano_md(plano)
-
-    for skill_name in skills or []:
-        files.update(_skill_files(skill_name))
 
     agent_files: list[tuple[str, str]] = []
     for agent in agentes:
