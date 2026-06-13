@@ -52,7 +52,10 @@
       "Bash(python -m ruff check utils/claude.py tests/unit/test_claude.py)",
       "Bash(python -m mypy utils/claude.py)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(python -m pytest tests/ -q)",
+      "Bash(python -m ruff check core/ api/ tests/)",
+      "Bash(python -m mypy core/analyzer.py core/builder.py core/dispatcher.py)"
     ]
   }
 }

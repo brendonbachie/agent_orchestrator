@@ -47,18 +47,23 @@ origem):
 
 ---
 
-## Estado: biblioteca pronta, integração pendente
+## Estado: integrada ao fluxo
 
-Estes arquivos **ainda não estão ligados** ao fluxo. Hoje o `analyzer.py` (Prompt 2) só
-conhece `templates/agents/`. Para as skills passarem a ser oferecidas e instaladas nos
-projetos gerados, falta:
+A biblioteca está **ligada** às três camadas:
 
-1. **Seleção** — o Prompt 2 (ou um passo novo) receber a lista de skills disponíveis e
-   escolher a *fatia* relevante por projeto (mesmo padrão "biblioteca vs novo" dos agentes).
-2. **Escrita** — `core/builder.py` montar `.claude/skills/<nome>/SKILL.md` e `core/writer.py`
-   gravar (atenção ao `newline="\n"` já usado, para não quebrar no WSL).
-3. **(Opcional) forçar no dispatcher** — `prompt_da_task` injetar a skill da task, do mesmo
-   jeito que já injeta "aplique o agente indicado" (caminho confiável, vs. torcer pelo auto-trigger).
+1. **Seleção** — `core/analyzer.py` (`_list_skills`) passa nome + description de cada
+   skill ao Prompt 2, que devolve `skills: [...]` (só nomes da biblioteca; nomes
+   inventados ou inexistentes são filtrados — não criamos skills novas).
+2. **Escrita** — `core/builder.py` (`_skill_files`) copia a pasta inteira da skill
+   selecionada para `.claude/skills/<nome>/` (SKILL.md + apoios); `core/writer.py`
+   grava com `newline="\n"`. `_normalize_name` + exigência de um SKILL.md real barram
+   path traversal e nome desconhecido. O endpoint `POST /generate` repassa `skills`.
+3. **Forçar no dispatcher** — `core/dispatcher.py` (`prompt_da_task`) injeta as skills
+   instaladas no prompt de cada task, mandando ler o SKILL.md correspondente em vez de
+   depender do auto-trigger por description. O endpoint `POST /dispatch` repassa `skills`.
 
-Enquanto isso, a biblioteca já serve para uso manual: copiar uma pasta de skill para o
-`.claude/skills/` de qualquer projeto.
+O frontend carrega `skills` da análise até `/generate` e `/dispatch` (`preview.js`,
+`generating.js`).
+
+Também dá para uso manual: copiar uma pasta de skill para o `.claude/skills/` de
+qualquer projeto.
