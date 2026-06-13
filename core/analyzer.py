@@ -183,38 +183,6 @@ def _list_templates() -> list[str]:
     return sorted(p.stem for p in _TEMPLATES_DIR.glob("*.md"))
 
 
-def _skill_description(skill_md: Path) -> str:
-    """Extrai a `description:` do frontmatter YAML do SKILL.md (vazio se ausente)."""
-    try:
-        linhas = skill_md.read_text(encoding="utf-8").splitlines()
-    except OSError:
-        return ""
-    if not linhas or linhas[0].strip() != "---":
-        return ""
-    for linha in linhas[1:]:
-        s = linha.strip()
-        if s == "---":
-            break
-        if s.startswith("description:"):
-            return s.removeprefix("description:").strip().strip("\"'")
-    return ""
-
-
-def _list_skills() -> list[dict[str, str]]:
-    """Skills da biblioteca: nome (pasta) + description (frontmatter do SKILL.md).
-
-    O modelo seleciona por nome a partir desta lista — nunca inventa skills novas
-    (skill inventada na hora é genérica e não dispara; ver curadoria em
-    templates/skills/README.md). A description alimenta a escolha por retrieval.
-    """
-    skills: list[dict[str, str]] = []
-    for skill_md in sorted(_SKILLS_DIR.glob("*/SKILL.md")):
-        skills.append(
-            {"name": skill_md.parent.name, "description": _skill_description(skill_md)}
-        )
-    return skills
-
-
 def _agentes_resumidos(agentes: list[_Agente]) -> list[dict[str, str]]:
     """Versão enxuta dos agentes para o Prompt 3 — nome, origem e um resumo.
 
