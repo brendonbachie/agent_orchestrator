@@ -45,8 +45,16 @@ def ordenar(plano: list[dict]) -> list[dict]:
     return resultado
 
 
-def prompt_da_task(task: dict, feitas: list[dict]) -> str:
-    """Monta o prompt focado de UMA task — enxuto, para o contexto não inchar."""
+def prompt_da_task(
+    task: dict, feitas: list[dict], skills: list[str] | None = None
+) -> str:
+    """Monta o prompt focado de UMA task — enxuto, para o contexto não inchar.
+
+    ``skills`` (nomes instalados em ``.claude/skills/``) são injetados à força no
+    prompt: não confiamos no auto-trigger por description (medimos que o julgamento
+    do modelo não delega de forma confiável) — instruímos a leitura do SKILL.md
+    correspondente, do mesmo jeito que já forçamos o uso do agente.
+    """
     partes = [
         "Você está implementando UMA task de um projeto maior. Leia o CLAUDE.md do "
         "projeto antes de começar e siga suas convenções.",
@@ -62,6 +70,13 @@ def prompt_da_task(task: dict, feitas: list[dict]) -> str:
         partes.append(
             f"Aplique a especialidade do agente '{agente}' (.claude/agents/{agente}.md); "
             "abra um subagente com ele se ajudar."
+        )
+    if skills:
+        nomes = ", ".join(skills)
+        partes.append(
+            f"Skills instaladas em .claude/skills/ ({nomes}): leia o SKILL.md da que "
+            "corresponder à situação e siga-a. Em especial, antes de declarar a task "
+            "concluída, VERIFIQUE de fato (rode os testes e leia a saída)."
         )
     if feitas:
         nomes = ", ".join(str(t.get("task", ""))[:50] for t in feitas)
