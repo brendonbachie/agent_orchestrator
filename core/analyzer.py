@@ -25,7 +25,6 @@ _PROMPT_2 = """Dado essa análise de projeto:
 {analise}
 
 Biblioteca de agentes disponíveis: {lista_templates}
-Biblioteca de skills disponíveis (procedimentos de dev reutilizáveis): {lista_skills}
 
 Para cada área de especialização identificada, decide se existe um agente adequado
 na biblioteca ou se é necessário criar um novo.
@@ -37,15 +36,8 @@ Retorna APENAS JSON válido, sem markdown, sem explicação:
       "source": "biblioteca|novo",
       "conteudo": "conteúdo completo em markdown se source=novo, null se source=biblioteca"
     }}
-  ],
-  "skills": ["nome-exato-de-skill-da-biblioteca"]
+  ]
 }}
-
-Regras para skills:
-- "skills" lista APENAS nomes EXATOS da biblioteca de skills acima que se aplicam a
-  este projeto (procedimentos de dev: depurar, verificar antes de concluir, isolar
-  workspace...). NÃO invente skills — skill inventada na hora é genérica e não dispara.
-  Lista vazia se nenhuma se aplicar.
 
 Regras para agentes novos (source="novo"):
 - O "conteudo" DEVE começar com frontmatter YAML, exatamente neste formato:
