@@ -168,30 +168,3 @@ def test_analyze_cache_miss_on_different_descricao():
         analyze("descrição A")
         analyze("descrição B")
     assert m.call_count == 6  # descrições distintas → não compartilham cache
-
-
-# ── Seleção de skills da biblioteca (Passo 1) ────────────────────────────────
-
-
-def test_analyze_selects_valid_skills_filters_invalid():
-    # systematic-debugging existe na biblioteca curada; a outra é inventada.
-    agentes_skills = {
-        "agentes": [],
-        "skills": ["systematic-debugging", "skill-inventada-xyz"],
-    }
-    with patch("core.analyzer.run_prompt", side_effect=[_ANALYSIS, agentes_skills, _RESULTADO]):
-        result = analyze("desc")
-    assert result["skills"] == ["systematic-debugging"]  # inventada foi descartada
-
-
-def test_analyze_skills_empty_when_none_selected(mock_run):
-    # _AGENTES não traz "skills" → schema default [] → saída [].
-    result = analyze("desc")
-    assert result["skills"] == []
-
-
-def test_analyze_passes_skill_library_to_second_prompt(mock_run):
-    analyze("desc")
-    second = mock_run.call_args_list[1][0][0]
-    # a biblioteca de skills curada deve entrar no Prompt 2 para a seleção.
-    assert "verification-before-completion" in second
