@@ -1,0 +1,74 @@
+{
+  "raw_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\qMID-raw-s2rdf3yj",
+  "orch_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\qMID-orch-3qlltxbz",
+  "raw": {
+    "tokens": {
+      "input": 9,
+      "cache_creation": 27495,
+      "cache_read": 196784,
+      "output": 20044
+    },
+    "custo": 0.5256852,
+    "meta": {
+      "ok": true,
+      "turns": 21,
+      "segundos": 223
+    }
+  },
+  "orch": {
+    "tokens": {
+      "output": 22600,
+      "cache_creation": 85412,
+      "cache_read": 1163261,
+      "input": 70
+    },
+    "custo": 1.2057373,
+    "meta": {
+      "n_tasks": 7,
+      "tasks": [
+        {
+          "ordem": 1,
+          "ok": true,
+          "turns": 10,
+          "segundos": 31
+        },
+        {
+          "ordem": 2,
+          "ok": true,
+          "turns": 9,
+          "segundos": 41
+        },
+        {
+          "ordem": 3,
+          "ok": true,
+          "turns": 9,
+          "segundos": 40
+        },
+        {
+          "ordem": 4,
+          "ok": true,
+          "turns": 11,
+          "segundos": 67
+        },
+        {
+          "ordem": 5,
+          "ok": true,
+          "turns": 7,
+          "segundos": 28
+        },
+        {
+          "ordem": 6,
+          "ok": true,
+          "turns": 9,
+          "segundos": 37
+        },
+        {
+          "ordem": 7,
+          "ok": true,
+          "turns": 23,
+          "segundos": 99
+        }
+      ]
+    }
+  }
+}
