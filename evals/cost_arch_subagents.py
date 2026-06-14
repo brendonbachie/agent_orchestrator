@@ -123,7 +123,18 @@ def main() -> None:
 
     print("\n── C: sessão única + subagentes ──", flush=True)
     ini = time.monotonic()
-    r = run_task(supervisor_prompt(PLANO), MODEL, pasta, timeout=3000)
+    prompt = supervisor_prompt(PLANO)
+    r = None
+    for i in range(4):  # absorve throttle transitório (stderr vazio, exit 1)
+        try:
+            r = run_task(prompt, MODEL, pasta, timeout=3000)
+            break
+        except Exception as e:  # noqa: BLE001
+            print(f"  tentativa {i+1} falhou ({e}); backoff 45s", flush=True)
+            if i == 3:
+                raise
+            time.sleep(45)
+    assert r is not None
     dt = time.monotonic() - ini
     tok = _tokens(r.get("usage") or {})
     custo_c = float(r.get("cost_usd") or 0)
