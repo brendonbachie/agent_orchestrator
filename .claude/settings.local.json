@@ -61,7 +61,8 @@
       "Bash(python evals/cost_monolito_vs_dispatcher.py)",
       "Bash(python evals/cost_quality_1k.py)",
       "Bash(python evals/cost_quality_A.py)",
-      "PowerShell($raw=\"C:\\\\Users\\\\brend\\\\AppData\\\\Local\\\\Temp\\\\qA-raw-yna5qj8e\"; $orch=\"C:\\\\Users\\\\brend\\\\AppData\\\\Local\\\\Temp\\\\qA-orch-rnyvag35\"; foreach \\($d in @\\($raw,$orch\\)\\) { Write-Output \"================= PYTEST: $d =================\"; python -m pytest $d -q --no-header 2>&1 | Select-Object -Last 12; Write-Output \"\" })"
+      "PowerShell($raw=\"C:\\\\Users\\\\brend\\\\AppData\\\\Local\\\\Temp\\\\qA-raw-yna5qj8e\"; $orch=\"C:\\\\Users\\\\brend\\\\AppData\\\\Local\\\\Temp\\\\qA-orch-rnyvag35\"; foreach \\($d in @\\($raw,$orch\\)\\) { Write-Output \"================= PYTEST: $d =================\"; python -m pytest $d -q --no-header 2>&1 | Select-Object -Last 12; Write-Output \"\" })",
+      "Bash(python -m ruff check core/ api/ utils/ tests/)"
     ]
   }
 }
