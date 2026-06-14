@@ -1,0 +1,13 @@
+{
+  "dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\qC-subag-d2rf6dqs",
+  "custo_C": 1.3149315000000006,
+  "tokens_principal_C": {
+    "input": 17,
+    "cache_creation": 18543,
+    "cache_read": 546149,
+    "output": 4388
+  },
+  "turns_C": 25,
+  "custo_A": 0.5256852,
+  "custo_B": 1.2057373
+}
