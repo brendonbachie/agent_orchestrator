@@ -101,10 +101,12 @@ Regras para o primeiro_prompt:
   subagente que faz a delegação realmente acontecer.
 - Reserve o trabalho leve de cola/integração para a thread principal (inline); só
   o trabalho pesado e especializado vai para subagentes.
-- Construa em FASES por subsistema: implemente um, rode seus testes, e ao passar
-  para o próximo subsistema independente comece com CONTEXTO FRESCO (instrua um
-  /clear ou um novo subagente) carregando só o CLAUDE.md — isso impede o contexto
-  de crescer e encarecer a releitura a cada turno.
+- Construa em FASES por subsistema: implemente um, rode seus testes, e só então
+  avance. Mantenha UMA sessão contínua — NÃO use /clear nem reinicie o contexto.
+  O isolamento do contexto pesado deve vir dos SUBAGENTES (cada um roda em contexto
+  próprio e descartável e devolve só um resumo), mantendo a thread principal enxuta
+  SEM fragmentar a sessão. Medimos: fragmentar com /clear quebra a delegação e
+  encarece; uma sessão única delegando aos subagentes é mais barata e mais coerente.
 - Peça que os testes de cada subsistema rodem antes de integrar o próximo.
 - Deve mandar SEGUIR o "plano" (em .claude/plano-build.md), task a task, na ordem.
 
