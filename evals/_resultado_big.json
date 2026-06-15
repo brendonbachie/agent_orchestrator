@@ -1,0 +1,158 @@
+{
+  "raw_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\big-raw-2orqtv_n",
+  "orch_dir": "C:\\Users\\brend\\AppData\\Local\\Temp\\big-orch-1em18qs1",
+  "n_modulos": 30,
+  "raw": {
+    "tokens": {
+      "input": 666,
+      "cache_creation": 84872,
+      "cache_read": 4374081,
+      "output": 69043
+    },
+    "custo": 0.9554711000000002,
+    "meta": {
+      "ok": true,
+      "turns": 83,
+      "segundos": 511
+    }
+  },
+  "orch": {
+    "tokens": {
+      "output": 32260,
+      "cache_read": 1401531,
+      "cache_creation": 83708,
+      "input": 492
+    },
+    "custo": 0.4728261,
+    "meta": {
+      "n_tasks": 30,
+      "tasks": [
+        {
+          "ordem": 1,
+          "ok": true,
+          "turns": 11
+        },
+        {
+          "ordem": 2,
+          "ok": true,
+          "turns": 14
+        },
+        {
+          "ordem": 3,
+          "ok": true,
+          "turns": 12
+        },
+        {
+          "ordem": 4,
+          "ok": true,
+          "turns": 4
+        },
+        {
+          "ordem": 5,
+          "ok": true,
+          "turns": 20
+        },
+        {
+          "ordem": 6,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 7,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 8,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 9,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 10,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 11,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 12,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 13,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 14,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 15,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 16,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 17,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 18,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 19,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 20,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 21,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 22,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 23,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 24,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 25,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 26,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 27,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 28,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 29,
+          "erro": "claude -p exited 1: "
+        },
+        {
+          "ordem": 30,
+          "erro": "claude -p exited 1: "
+        }
+      ]
+    }
+  }
+}
