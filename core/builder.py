@@ -103,7 +103,8 @@ def build(
             files[f".claude/agents/{name}.md"] = content
             agent_files.append((name, content))
 
-    files["CLAUDE.md"] = _ensure_agents_section(claude_md, agent_files)
+    claude_md = _ensure_agents_section(claude_md, agent_files)
+    files["CLAUDE.md"] = _ensure_testing_discipline(claude_md)
 
     if hooks:
         hook_settings: dict[str, list] = {}
