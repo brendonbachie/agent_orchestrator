@@ -96,6 +96,14 @@ def test_third_prompt_forces_task_delegation(mock_run):
     assert "subagente" in third_prompt and "task" in third_prompt
 
 
+def test_third_prompt_injects_testing_discipline(mock_run):
+    analyze("desc")
+    third_prompt = mock_run.call_args_list[2][0][0]
+    # a contenção anti over-testing precisa estar no prompt que gera o claude_md e o
+    # primeiro_prompt (que ABRE o subagente).
+    assert "teste o essencial, sem exaustividade" in third_prompt
+
+
 def test_analyze_passes_template_list_to_second_prompt(mock_run):
     analyze("desc")
     second_prompt = mock_run.call_args_list[1][0][0]
