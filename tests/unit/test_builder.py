@@ -5,7 +5,8 @@ from core.builder import build
 
 def test_claude_md_always_included():
     files = build("# Hello", [], [])
-    assert files["CLAUDE.md"] == "# Hello"
+    # O conteúdo original é preservado no topo; a diretriz de testes é anexada ao final.
+    assert files["CLAUDE.md"].startswith("# Hello")
 
 
 def test_biblioteca_agent_resolved_from_template():
