@@ -19,6 +19,7 @@ class GenerateRequest(BaseModel):
     primeiro_prompt: str
     plano: list[dict] = []
     sobrescrever: bool = False
+    orquestrar: bool = False
 
 
 @router.post("/generate")
