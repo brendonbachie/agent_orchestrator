@@ -165,3 +165,36 @@ def _resolve_agent(agent: dict, name: str) -> str | None:
             return template.read_text(encoding="utf-8")
     content = agent.get("conteudo")
     return content if content else None
+
+
+_TIER_MODEL = {"free": "haiku", "haiku": "haiku", "sonnet": "sonnet", "opus": "opus"}
+
+
+def _tier_para_model(tier: str | None) -> str | None:
+    """Mapeia o tier do plano (free/sonnet/opus) para o `model:` do frontmatter.
+
+    `free` (tier do roadmap #12, sem roteamento próprio) cai no modelo real mais
+    barato (haiku). Tier desconhecido → None (agente herda o modelo da sessão).
+    """
+    return _TIER_MODEL.get((tier or "").strip().lower())
+
+
+def _inject_agent_model(content: str, model: str) -> str:
+    """Insere/atualiza `model: <model>` no frontmatter YAML do agente.
+
+    No-op se o conteúdo não tiver frontmatter (`---` na primeira linha). Assim cada
+    subagente roda no seu tier em vez de herdar o modelo (caro) do supervisor.
+    """
+    lines = content.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return content
+    end = next((i for i in range(1, len(lines)) if lines[i].strip() == "---"), None)
+    if end is None:
+        return content
+    tail = "\n" if content.endswith("\n") else ""
+    for i in range(1, end):
+        if lines[i].strip().lower().startswith("model:"):
+            lines[i] = f"model: {model}"
+            return "\n".join(lines) + tail
+    lines.insert(end, f"model: {model}")
+    return "\n".join(lines) + tail
