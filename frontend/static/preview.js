@@ -146,6 +146,8 @@ function collect() {
     hooks,
     primeiro_prompt: document.getElementById('primeiro-prompt').value,
     plano: proposta.plano ?? [],
+    // Gate: projeto grande delegável → launch.sh sobe em opus (opus delega; sonnet faz inline).
+    orquestrar: proposta.recomendacao?.orquestrar === true,
   };
 }
 
