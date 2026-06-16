@@ -271,6 +271,7 @@ def analyze(descricao: str) -> dict[str, object]:
                 descricao=descricao,
                 analise=json.dumps(analise.model_dump(), ensure_ascii=False),
                 agentes=json.dumps(_agentes_resumidos(agentes.agentes), ensure_ascii=False),
+                disciplina=DISCIPLINA_TESTES,
             ),
             timeout=180,
             model="opus",
