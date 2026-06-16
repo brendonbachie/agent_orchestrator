@@ -211,3 +211,38 @@ def test_hook_script_path_referenced_in_settings():
     settings = json.loads(files[".claude/settings.json"])
     command = settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
     assert ".claude/hooks/" in command
+
+
+# ── Tier de modelo no frontmatter do agente (vindo do plano) ─────────────────
+
+
+def test_agent_frontmatter_gets_model_from_plano():
+    agent = {"name": "esp", "source": "novo",
+             "conteudo": "---\nname: esp\ndescription: faz X\n---\n# esp"}
+    plano = [{"ordem": 1, "task": "y", "agente": "esp", "modelo": "opus", "depende_de": []}]
+    files = build("# md", [agent], [], None, plano)
+    conteudo = files[".claude/agents/esp.md"]
+    assert "model: opus" in conteudo
+    assert conteudo.startswith("---")  # frontmatter preservado
+
+
+def test_free_tier_maps_to_haiku():
+    agent = {"name": "mec", "source": "novo",
+             "conteudo": "---\nname: mec\ndescription: boilerplate\n---\nbody"}
+    plano = [{"ordem": 1, "task": "y", "agente": "mec", "modelo": "free", "depende_de": []}]
+    files = build("", [agent], [], None, plano)
+    assert "model: haiku" in files[".claude/agents/mec.md"]
+
+
+def test_agent_without_plano_keeps_no_model():
+    agent = {"name": "esp", "source": "novo",
+             "conteudo": "---\nname: esp\ndescription: faz X\n---\nbody"}
+    files = build("", [agent], [])
+    assert "model:" not in files[".claude/agents/esp.md"]
+
+
+def test_agent_no_frontmatter_unchanged_by_model():
+    agent = {"name": "esp", "source": "novo", "conteudo": "# esp\nsem frontmatter"}
+    plano = [{"ordem": 1, "task": "y", "agente": "esp", "modelo": "opus", "depende_de": []}]
+    files = build("", [agent], [], None, plano)
+    assert files[".claude/agents/esp.md"] == "# esp\nsem frontmatter"
