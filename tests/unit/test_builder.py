@@ -91,7 +91,8 @@ def test_agents_section_preserved_when_present():
     claude_md = "# Projeto\n\n## Agentes\n\n- já documentado\n"
     agente = {"name": "x", "source": "novo", "conteudo": "# x\nFaz algo."}
     files = build(claude_md, [agente], [])
-    assert files["CLAUDE.md"] == claude_md
+    # Seção ## Agentes preservada (não duplicada); a diretriz de testes é anexada depois.
+    assert files["CLAUDE.md"].startswith(claude_md)
     assert files["CLAUDE.md"].count("## Agentes") == 1
 
 
