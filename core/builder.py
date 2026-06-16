@@ -177,6 +177,28 @@ def _ensure_agents_section(claude_md: str, agent_files: list[tuple[str, str]]) -
     return claude_md.rstrip() + "\n" + "\n".join(linhas) + "\n"
 
 
+def _ensure_testing_discipline(claude_md: str) -> str:
+    """Garante uma seção de disciplina de testes no CLAUDE.md (contenção de over-testing).
+
+    Se o analyzer já a incluiu (marcador presente), preserva; senão acrescenta o texto
+    canônico ao final. Mesma filosofia do `_ensure_agents_section`.
+    """
+    if _DISCIPLINA_MARKER in claude_md:
+        return claude_md
+    return claude_md.rstrip() + "\n\n## Disciplina de testes\n\n" + DISCIPLINA_TESTES + "\n"
+
+
+def _com_disciplina_testes(texto: str) -> str:
+    """Acrescenta a diretriz de disciplina de testes ao primeiro prompt, se faltar.
+
+    Garante que o prompt que ABRE a sessão (e, dele, os subagentes) carregue a contenção
+    de over-testing — independentemente do que o analyzer gerou.
+    """
+    if _DISCIPLINA_MARKER in texto:
+        return texto
+    return texto.rstrip() + "\n\n" + DISCIPLINA_TESTES + "\n"
+
+
 def _agent_description(content: str) -> str:
     """Extrai a descrição do agente: frontmatter `description:` ou primeira linha de texto."""
     lines = content.strip().splitlines()
