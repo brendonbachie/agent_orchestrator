@@ -4,6 +4,7 @@ from typing import TypeVar
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from core.builder import DISCIPLINA_TESTES
 from utils.analysis_cache import cache_get, cache_key, cache_set
 from utils.claude import ClaudeError, run_prompt
 
