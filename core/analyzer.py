@@ -111,6 +111,9 @@ Regras para o primeiro_prompt:
   encarece; uma sessão única delegando aos subagentes é mais barata e mais coerente.
 - Peça que os testes de cada subsistema rodem antes de integrar o próximo.
 - Deve mandar SEGUIR o "plano" (em .claude/plano-build.md), task a task, na ordem.
+- Inclua esta diretriz de disciplina de testes e, ao mandar abrir um subagente para
+  escrever testes, repita explicitamente no prompt dele "teste o essencial, sem
+  exaustividade". Diretriz: {disciplina}
 
 Regras para o plano:
 - Decomponha o build em tasks. Cada task traz: o que construir, um CONTRATO
