@@ -6,14 +6,54 @@ _TEMPLATES_DIR = Path(__file__).parent.parent / "templates" / "agents"
 _VALID_NAME = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 
-_LAUNCH_SCRIPT = """\
+# Diretriz anti over-testing: o subagente focado tende a exagerar (medimos um build
+# com 3.386 LOC de teste). Injetada no CLAUDE.md e no primeiro-prompt — a última frase
+# precisa estar no prompt que ABRE o subagente.
+DISCIPLINA_TESTES = (
+    "Disciplina de testes. Escreva testes proporcionais ao risco, não ao escopo. "
+    "Para cada módulo, cubra o caminho feliz, as bordas que de fato quebram "
+    "(entrada vazia/nula, limite, erro esperado) e regressões conhecidas. NÃO gere "
+    "permutações exaustivas, não teste getters/setters triviais nem reescreva o mesmo "
+    "cenário com dados ligeiramente diferentes. Mire em cobrir comportamento, não em "
+    "maximizar linhas de teste — como regra de bolso, o arquivo de teste de um módulo "
+    "não deve ser maior que o módulo testado, salvo justificativa real. Ao delegar a "
+    "escrita de testes a um subagente, diga explicitamente no prompt dele: "
+    '"teste o essencial, sem exaustividade".'
+)
+
+# Frase única da diretriz — marcador para não duplicá-la se o analyzer já a incluiu.
+_DISCIPLINA_MARKER = "teste o essencial, sem exaustividade"
+
+
+def _launch_script(orquestrar: bool) -> str:
+    """Monta o launch.sh: faz cd no projeto e abre o Claude com o primeiro prompt (de arquivo).
+
+    Modelo por gate de complexidade: projeto grande delegável (orquestrar=True) sobe em
+    `opus` — medimos que opus DELEGA aos subagentes e o supervisor fica enxuto, enquanto
+    o sonnet faria o trabalho inline e não dispara a delegação. Projeto simples fica em
+    `sonnet` (barato, sem delegação a perder). A economia dos subagentes vem do `model:`
+    no frontmatter de cada um, não da sessão. O prompt vem de arquivo (não da linha de
+    comando) porque o `;` quebraria o Windows Terminal.
+    """
+    model = "opus" if orquestrar else "sonnet"
+    return f"""\
 #!/usr/bin/env bash
 # Abre o Claude Code no projeto com o primeiro prompt gerado pelo orquestrador.
-# --model sonnet: o build roda no modelo barato (medimos ~5x vs Opus). O trabalho
-# pesado vai para subagentes (que podem ter model próprio no frontmatter); para
-# decisões realmente difíceis, suba com /model dentro da sessão.
+# --model {model}: escolhido pelo gate (orquestrar={str(orquestrar).lower()}). opus em
+# projeto grande delegável (opus delega; sonnet faria inline); sonnet caso contrário.
 cd "$(dirname "$0")/.." || exit 1
-claude --model sonnet "$(cat .claude/primeiro-prompt.txt)"
+claude --model {model} "$(cat .claude/primeiro-prompt.txt)"
+"""
+
+
+# Retoma a sessão interativa de onde parou (resume nativo), sem refazer o build.
+_RESUME_SCRIPT = """\
+#!/usr/bin/env bash
+# Retoma a sessão interativa do Claude Code neste projeto de onde parou — sem refazer
+# o build. `claude --resume` lista as sessões salvas para escolher uma (passe um id de
+# sessão como argumento para pular o seletor); `claude -c` continuaria a última direto.
+cd "$(dirname "$0")/.." || exit 1
+claude --resume "$@"
 """
 
 
