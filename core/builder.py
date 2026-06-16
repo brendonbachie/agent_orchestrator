@@ -63,13 +63,19 @@ def build(
     hooks: list[dict],
     primeiro_prompt: str | None = None,
     plano: list[dict] | None = None,
+    orquestrar: bool = False,
 ) -> dict[str, str]:
-    """Return {relative_path: content} for every file to be written to the project."""
+    """Return {relative_path: content} for every file to be written to the project.
+
+    ``orquestrar`` vem da recomendação do analyzer (gate de complexidade) e decide o
+    modelo do launch.sh: opus em projeto grande delegável, sonnet caso contrário.
+    """
     files: dict[str, str] = {}
 
     if primeiro_prompt:
-        files[".claude/primeiro-prompt.txt"] = primeiro_prompt
-        files[".claude/launch.sh"] = _LAUNCH_SCRIPT
+        files[".claude/primeiro-prompt.txt"] = _com_disciplina_testes(primeiro_prompt)
+        files[".claude/launch.sh"] = _launch_script(orquestrar)
+        files[".claude/resume.sh"] = _RESUME_SCRIPT
 
     if plano:
         files[".claude/plano-build.md"] = _plano_md(plano)
