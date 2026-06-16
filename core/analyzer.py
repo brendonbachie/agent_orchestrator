@@ -94,6 +94,7 @@ Regras para o claude_md:
 - Seja CONCISO: o CLAUDE.md é relido a CADA turno, então o tamanho dele custa em
   toda interação. Prefira bullets curtos a prosa; foque em convenções, fronteiras
   e o que NÃO fazer — sem tutorial, sem repetir o óbvio.
+- Inclua uma seção de disciplina de testes com EXATAMENTE este texto: {disciplina}
 
 Regras para o primeiro_prompt:
 - Deve instruir EXPLICITAMENTE o uso da ferramenta Task para cada subsistema
