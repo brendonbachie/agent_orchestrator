@@ -34,13 +34,26 @@ def build(
     if plano:
         files[".claude/plano-build.md"] = _plano_md(plano)
 
+    # Tier de modelo por agente, do plano (task.agente -> task.modelo): cada subagente
+    # roda no seu preço (mecânico barato, crítico opus) quando o supervisor o abre via
+    # Task. Medido: o Claude Code respeita o `model:` no frontmatter do agente.
+    tier_por_agente: dict[str, str | None] = {}
+    for t in plano or []:
+        ag = t.get("agente")
+        if ag and ag not in tier_por_agente:
+            tier_por_agente[ag] = t.get("modelo")
+
     agent_files: list[tuple[str, str]] = []
     for agent in agentes:
-        name = _normalize_name(agent.get("name"))
+        raw = agent.get("name")
+        name = _normalize_name(raw)
         if not name:
             continue
         content = _resolve_agent(agent, name)
         if content:
+            modelo = _tier_para_model(tier_por_agente.get(raw))
+            if modelo:
+                content = _inject_agent_model(content, modelo)
             files[f".claude/agents/{name}.md"] = content
             agent_files.append((name, content))
 
