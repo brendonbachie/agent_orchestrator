@@ -101,7 +101,7 @@ def test_no_agents_section_without_agents():
 
 def test_primeiro_prompt_writes_prompt_and_launch_script():
     files = build("# md", [], [], "Comece implementando o módulo X")
-    assert files[".claude/primeiro-prompt.txt"] == "Comece implementando o módulo X"
+    assert files[".claude/primeiro-prompt.txt"].startswith("Comece implementando o módulo X")
     assert "claude" in files[".claude/launch.sh"]
     assert "primeiro-prompt.txt" in files[".claude/launch.sh"]
 
@@ -110,6 +110,54 @@ def test_no_primeiro_prompt_no_launch_files():
     files = build("# md", [], [])
     assert ".claude/primeiro-prompt.txt" not in files
     assert ".claude/launch.sh" not in files
+    assert ".claude/resume.sh" not in files
+
+
+# ── ITEM 1: modelo do launch.sh por gate de complexidade ─────────────────────
+
+
+def test_launch_script_uses_sonnet_by_default():
+    files = build("# md", [], [], "prompt")
+    assert "--model sonnet" in files[".claude/launch.sh"]
+    assert "--model opus" not in files[".claude/launch.sh"]
+
+
+def test_launch_script_uses_opus_when_orquestrar():
+    files = build("# md", [], [], "prompt", orquestrar=True)
+    assert "--model opus" in files[".claude/launch.sh"]
+    assert "--model sonnet" not in files[".claude/launch.sh"]
+
+
+# ── ITEM 2: diretriz anti over-testing ───────────────────────────────────────
+
+_MARKER = "teste o essencial, sem exaustividade"
+
+
+def test_testing_discipline_injected_in_claude_md():
+    files = build("# Projeto\n\nStack: Python\n", [], [])
+    assert _MARKER in files["CLAUDE.md"]
+    assert "Disciplina de testes" in files["CLAUDE.md"]
+
+
+def test_testing_discipline_injected_in_primeiro_prompt():
+    files = build("# md", [], [], "Comece pelo módulo X")
+    assert _MARKER in files[".claude/primeiro-prompt.txt"]
+
+
+def test_testing_discipline_not_duplicated_when_already_present():
+    claude_md = "# Projeto\n\nLembre: teste o essencial, sem exaustividade.\n"
+    files = build(claude_md, [], [])
+    assert files["CLAUDE.md"].count(_MARKER) == 1
+    assert "## Disciplina de testes" not in files["CLAUDE.md"]
+
+
+# ── ITEM 3: resume.sh (resume nativo) ────────────────────────────────────────
+
+
+def test_resume_script_generated_with_primeiro_prompt():
+    files = build("# md", [], [], "prompt")
+    assert ".claude/resume.sh" in files
+    assert "--resume" in files[".claude/resume.sh"]
 
 
 def test_plano_writes_build_file():
