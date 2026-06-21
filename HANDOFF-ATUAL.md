@@ -127,17 +127,23 @@ investir em catálogo grande (geração é barata, modelo especializa bem na hor
 
 ## Pendências / próximos passos (em ordem de valor)
 
-1. **`launch.sh` por gate**: hoje crava `--model sonnet` (perdedor pra projeto grande,
-   sonnet não delega). Trocar por opus quando `recomendacao.orquestrar=true`, sonnet se
-   não. (O frontmatter dos agentes já cuida da economia dos subagentes.)
-2. **Diretriz anti over-testing** no CLAUDE.md/prompt gerado (RAG3 gerou 3.386 LOC de
-   teste — subagente focado exagera).
-3. **Resume**: o `claude -c` / `claude --resume` já resolve "rodar de onde parou" no
-   launcher (nativo). Faltaria gerar um `resume.sh` + checkpoint no dispatcher (se for
+CONCLUÍDAS em 2026-06-21:
+- ✅ **`launch.sh` por gate**: `_launch_script(orquestrar)` em `core/builder.py` sobe em
+  `opus` quando `recomendacao.orquestrar=true`, `sonnet` caso contrário. O `orquestrar`
+  flui frontend (`preview.js`) → `POST /generate` (`api/generate.py`) → `build()`.
+- ✅ **Diretriz anti over-testing**: `DISCIPLINA_TESTES` em `core/builder.py`, injetada no
+  CLAUDE.md (`_ensure_testing_discipline`), no primeiro-prompt (`_com_disciplina_testes`)
+  e no Prompt 3 do analyzer (`{disciplina}`). 149 testes verdes.
+- ✅ **Memória do projeto**: criada `agent-orchestrator-config-vencedora-delegacao.md`
+  (delegação FUNCIONA + config vencedora + tier por subagente provado) e cruzada na
+  `dispatcher-custo-medido`.
+
+Abertas:
+1. **Resume**: o `claude -c` / `claude --resume` já resolve "rodar de onde parou" no
+   launcher (nativo; já há `.claude/resume.sh`). Faltaria checkpoint no dispatcher (se for
    manter o dispatcher — mas ele perde, considerar aposentar).
-4. **Memória do projeto** (`~/.claude/.../memory/`): tem `dispatcher-custo-medido`,
-   `skills-revertidas`, `ambiente-pro`. **CORRIGIR**: a delegação FUNCIONA (não "0
-   subagentes"); registrar a config vencedora + o tier por subagente provado.
+2. **Calibrar o gate por dados**: registrar projeto + tokens + custo + orquestrado? para o
+   gate aprender o limiar por dados, não heurística.
 
 ---
 
