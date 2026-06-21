@@ -22,9 +22,9 @@ _PROMPT_1 = """Analisa esse projeto e retorna APENAS JSON válido, sem markdown,
 }}
 
 Estime "porte" pelo tamanho/complexidade esperado do código:
-- "pequeno": até ~600 linhas, 1-2 subsistemas (ex.: calculadora, CRUD simples, app de tela única).
+- "pequeno": até ~600 linhas, 1-2 subsistemas (calculadora, CRUD simples, app de tela única).
 - "medio": ~600 a ~2000 linhas, alguns subsistemas integrados.
-- "grande": acima de ~2000 linhas, muitos subsistemas independentes (ex.: RAG completo, plataforma com várias áreas).
+- "grande": acima de ~2000 linhas, muitos subsistemas independentes (RAG completo, plataforma multi-área).
 
 Projeto: {descricao}"""
 
