@@ -143,6 +143,7 @@ class _Analise(BaseModel):
     padrao: str = ""
     pontos_de_falha: list[str] = []
     precisa_especializacao: list[str] = []
+    porte: str = ""
 
 
 class _Agente(BaseModel):
