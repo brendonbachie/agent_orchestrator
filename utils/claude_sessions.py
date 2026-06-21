@@ -35,6 +35,12 @@ def encode_session_dirname(pasta_wsl: str) -> str:
 def read_session_jsonl(pasta_wsl: str) -> str:
     """Retorna o conteúdo concatenado dos ``*.jsonl`` da sessão, ou ``""``.
 
+    Inclui os transcripts dos SUBAGENTES (``<sessão>/subagents/*.jsonl``), gravados
+    em subpasta separada da thread principal. Sem eles o consumo fica subestimado:
+    medimos um build (projeto "tela") em que os subagentes eram ~28% do custo e o
+    endpoint os ignorava — a "cegueira de sidechain". Como ``aggregate`` soma por
+    modelo, basta concatenar os arquivos extras.
+
     Em Windows lê via WSL (onde o Claude rodou); em POSIX lê direto de
     ``~/.claude/projects``. Nunca lança — ausência de sessão retorna string vazia.
     """
@@ -42,10 +48,11 @@ def read_session_jsonl(pasta_wsl: str) -> str:
 
     if _ON_WINDOWS:
         # `encoded` só tem [A-Za-z0-9-], então é seguro interpolar no comando.
+        base = f"~/.claude/projects/{encoded}"
         try:
             result = subprocess.run(
                 ["wsl.exe", "bash", "-lc",
-                 f"cat ~/.claude/projects/{encoded}/*.jsonl 2>/dev/null"],
+                 f"cat {base}/*.jsonl {base}/*/subagents/*.jsonl 2>/dev/null"],
                 capture_output=True,
                 stdin=subprocess.DEVNULL,
                 encoding="utf-8",
@@ -56,11 +63,13 @@ def read_session_jsonl(pasta_wsl: str) -> str:
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return ""
 
-    base = Path.home() / ".claude" / "projects" / encoded
-    if not base.exists():
+    base_dir = Path.home() / ".claude" / "projects" / encoded
+    if not base_dir.exists():
         return ""
     partes: list[str] = []
-    for f in sorted(base.glob("*.jsonl")):
+    # Sessões principais + subagentes (subpasta `*/subagents/`), em ordem estável.
+    arquivos = sorted(base_dir.glob("*.jsonl")) + sorted(base_dir.glob("*/subagents/*.jsonl"))
+    for f in arquivos:
         try:
             partes.append(f.read_text(encoding="utf-8", errors="replace"))
         except OSError:
