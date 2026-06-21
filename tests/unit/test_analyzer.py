@@ -70,11 +70,20 @@ def test_analyze_includes_recomendacao_simple_project(mock_run):
     assert result["recomendacao"]["orquestrar"] is False
 
 
-def test_recomendacao_true_for_multiple_areas():
-    analise_multi = {**_ANALYSIS, "precisa_especializacao": ["a", "b", "c"]}
+def test_recomendacao_true_for_multiple_areas_and_large():
+    # Orquestrar exige DOIS sinais: várias áreas especializadas E porte grande.
+    analise_multi = {**_ANALYSIS, "precisa_especializacao": ["a", "b", "c"], "porte": "grande"}
     with patch("core.analyzer.run_prompt", side_effect=[analise_multi, _AGENTES, _RESULTADO]):
         result = analyze("desc complexa")
     assert result["recomendacao"]["orquestrar"] is True
+
+
+def test_recomendacao_false_for_specialized_but_small():
+    # Várias áreas, mas porte pequeno → monólito ganha (medido). Não recomenda orquestrar.
+    analise = {**_ANALYSIS, "precisa_especializacao": ["a", "b", "c"], "porte": "pequeno"}
+    with patch("core.analyzer.run_prompt", side_effect=[analise, _AGENTES, _RESULTADO]):
+        result = analyze("desc")
+    assert result["recomendacao"]["orquestrar"] is False
 
 
 def test_analyze_includes_plano_key(mock_run):
