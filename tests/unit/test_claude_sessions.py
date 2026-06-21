@@ -1,4 +1,10 @@
-from utils.claude_sessions import encode_session_dirname, to_wsl_path
+from unittest.mock import patch
+
+from utils.claude_sessions import (
+    encode_session_dirname,
+    read_session_jsonl,
+    to_wsl_path,
+)
 
 
 def test_to_wsl_path_converts_windows_drive():
