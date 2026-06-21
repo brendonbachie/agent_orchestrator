@@ -220,16 +220,31 @@ def _agentes_resumidos(agentes: list[_Agente]) -> list[dict[str, str]]:
 def _recomendacao(analise: _Analise) -> dict[str, object]:
     """Heurística determinística: vale a pena orquestrar este projeto?
 
-    Orquestração compensa em projetos com várias áreas especializadas (trabalho
-    pesado e isolável). Em projeto simples ela custa MAIS (medido: calculadora
-    3,7x). Decidido sem nenhuma chamada extra ao Claude.
+    Orquestrar (sessão opus que delega a subagentes) só se paga em projeto GRANDE.
+    Exige DOIS sinais: várias áreas especializadas E porte grande. Medições:
+    - calculadora ~200 LOC: orquestrar ~2-3,7x pior;
+    - controle de gastos ~650 LOC / 7 subsistemas: monólito ainda venceu;
+    - app de tela ~1.053 LOC / 2 áreas: em opus custou ~$32,57 (delegação disparou,
+      mas caro demais pro tamanho) — o gate antigo (só nº de áreas) recomendou
+      orquestrar indevidamente. Por isso agora o porte entra na decisão.
+    O cruzamento real é multi-k LOC; especialização sozinha não basta.
     """
     n = len(analise.precisa_especializacao)
-    if n >= 2:
+    grande = analise.porte.strip().lower() == "grande"
+    if n >= 2 and grande:
         return {
             "orquestrar": True,
-            "motivo": f"{n} áreas especializadas identificadas — a orquestração "
-            "(agentes + isolamento de contexto) tende a compensar.",
+            "motivo": f"{n} áreas especializadas e porte grande — só aqui a "
+            "orquestração (sessão opus + subagentes isolados) tende a compensar o "
+            "custo do isolamento.",
+        }
+    if n >= 2:
+        return {
+            "orquestrar": False,
+            "motivo": f"{n} áreas especializadas, mas porte "
+            f"{analise.porte or 'pequeno/médio'} — medimos a orquestração custar "
+            "MAIS que o prompt único nesse tamanho (o monólito não incha até "
+            "~milhares de linhas). Use o Claude Code direto, em sessão única.",
         }
     return {
         "orquestrar": False,
