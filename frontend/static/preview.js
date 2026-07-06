@@ -148,6 +148,8 @@ function collect() {
     plano: proposta.plano ?? [],
     // Gate: projeto grande delegável → launch.sh sobe em opus (opus delega; sonnet faz inline).
     orquestrar: proposta.recomendacao?.orquestrar === true,
+    // Metadados da decisão do gate — persistidos para calibrar o limiar por dados reais.
+    recomendacao: proposta.recomendacao ?? {},
   };
 }
 
