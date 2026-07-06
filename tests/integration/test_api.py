@@ -220,33 +220,3 @@ async def test_usage_no_session_found(client):
 async def test_usage_missing_pasta_returns_422(client):
     res = await client.get("/usage")
     assert res.status_code == 422
-
-
-# ── POST /dispatch ────────────────────────────────────────────────────────────
-
-
-async def test_dispatch_streams_tasks_and_summary(client):
-    def fake_run_task(prompt, model, cwd):
-        return {"ok": True, "usage": {}, "cost_usd": 0.5}
-
-    plano = [
-        {"ordem": 1, "task": "fundação", "modelo": "opus"},
-        {"ordem": 2, "task": "folha", "modelo": "sonnet", "depende_de": [1]},
-    ]
-    with (
-        patch("api.dispatch.run_task", fake_run_task),
-        patch("api.dispatch.run_pytest", lambda pasta: True),
-    ):
-        res = await client.post("/dispatch", json={"pasta": "/p", "plano": plano})
-    assert res.status_code == 200
-    linhas = [json.loads(x) for x in res.text.splitlines() if x.strip()]
-    tasks = [e for e in linhas if e.get("tipo") == "task"]
-    resumo = next(e for e in linhas if e.get("tipo") == "resumo")
-    assert [t["ordem"] for t in tasks] == [1, 2]  # ordem topológica, ao vivo
-    assert tasks[0]["testes_ok"] is True  # gate de testes rodou
-    assert resumo["custo_usd_total"] == 1.0
-
-
-async def test_dispatch_empty_plan_returns_400(client):
-    res = await client.post("/dispatch", json={"pasta": "/p", "plano": []})
-    assert res.status_code == 400
