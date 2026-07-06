@@ -20,6 +20,7 @@ class GenerateRequest(BaseModel):
     plano: list[dict] = []
     sobrescrever: bool = False
     orquestrar: bool = False
+    recomendacao: dict = {}
 
 
 @router.post("/generate")
