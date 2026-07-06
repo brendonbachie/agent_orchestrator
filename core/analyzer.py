@@ -231,8 +231,10 @@ def _recomendacao(analise: _Analise) -> dict[str, object]:
     """
     n = len(analise.precisa_especializacao)
     grande = analise.porte.strip().lower() == "grande"
+    base = {"porte": analise.porte, "areas_especializadas": n}
     if n >= 2 and grande:
         return {
+            **base,
             "orquestrar": True,
             "motivo": f"{n} áreas especializadas e porte grande — só aqui a "
             "orquestração (sessão opus + subagentes isolados) tende a compensar o "
@@ -240,6 +242,7 @@ def _recomendacao(analise: _Analise) -> dict[str, object]:
         }
     if n >= 2:
         return {
+            **base,
             "orquestrar": False,
             "motivo": f"{n} áreas especializadas, mas porte "
             f"{analise.porte or 'pequeno/médio'} — medimos a orquestração custar "
@@ -247,6 +250,7 @@ def _recomendacao(analise: _Analise) -> dict[str, object]:
             "~milhares de linhas). Use o Claude Code direto, em sessão única.",
         }
     return {
+        **base,
         "orquestrar": False,
         "motivo": "Projeto com pouca especialização. Provavelmente sai mais barato "
         "com um prompt único direto no Claude Code — medimos a orquestração custar "
