@@ -46,7 +46,9 @@ async def generate_endpoint(req: GenerateRequest) -> dict:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
     file_list = list(files.keys())
-    await asyncio.to_thread(storage.save_project, pasta_write, file_list, req.primeiro_prompt)
+    await asyncio.to_thread(
+        storage.save_project, pasta_write, file_list, req.primeiro_prompt, req.recomendacao
+    )
 
     launch_error: str | None = None
     try:
