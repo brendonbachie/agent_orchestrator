@@ -201,20 +201,29 @@ async def test_usage_aggregates_session(client):
             "cache_read_input_tokens": 1000, "output_tokens": 5,
         }}}
     )
-    with patch("api.usage.read_session_jsonl", return_value=fake):
+    with (
+        patch("api.usage.read_session_jsonl", return_value=fake),
+        patch("api.usage.storage.record_usage") as mock_record,
+    ):
         res = await client.get("/usage", params={"pasta": "C:\\proj\\x"})
     assert res.status_code == 200
     data = res.json()
     assert data["encontrado"] is True
     assert data["total"] == 1115
     assert data["cache_read"] == 1000
+    # custo real medido alimenta o dataset de calibração do gate
+    mock_record.assert_called_once_with("C:\\proj\\x", data)
 
 
 async def test_usage_no_session_found(client):
-    with patch("api.usage.read_session_jsonl", return_value=""):
+    with (
+        patch("api.usage.read_session_jsonl", return_value=""),
+        patch("api.usage.storage.record_usage") as mock_record,
+    ):
         res = await client.get("/usage", params={"pasta": "C:\\proj\\x"})
     assert res.status_code == 200
     assert res.json()["encontrado"] is False
+    mock_record.assert_not_called()
 
 
 async def test_usage_missing_pasta_returns_422(client):
