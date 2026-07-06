@@ -5,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 
 from api.agents import router as agents_router
 from api.analyze import router as analyze_router
-from api.dispatch import router as dispatch_router
 from api.folderpicker import router as folderpicker_router
 from api.generate import router as generate_router
 from api.projects import router as projects_router
@@ -15,7 +14,6 @@ app = FastAPI(title="Agent Orchestrator")
 
 app.include_router(agents_router)
 app.include_router(analyze_router)
-app.include_router(dispatch_router)
 app.include_router(folderpicker_router)
 app.include_router(generate_router)
 app.include_router(projects_router)
