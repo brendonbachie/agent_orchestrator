@@ -131,16 +131,27 @@ A geração não pode custar mais tokens do que o projeto economiza. Três medid
 3. **Cache por hash** — `utils/analysis_cache.py` guarda o resultado por
    `hash(descrição + templates)`; gerar a mesma descrição de novo custa zero.
 
-**Dispatcher só vale para projeto grande (gate de complexidade).**
-`analyze()` retorna `recomendacao` (`orquestrar` true/false) por heurística do nº de
-áreas de especialização. `core/dispatcher.py` executa o `plano` task a task, cada
-uma em sessão `claude -p` isolada (`utils.claude.run_task`) no modelo do tier — isso
-força o isolamento de contexto que o prompt sozinho não garante. MAS medimos: em
-projeto pequeno o dispatcher custa MAIS (3 sessões frias pagam 3× o boot, sem acúmulo
-para economizar; calculadora/mini-tarefas ~4× pior). O ganho só aparece em projeto
-grande (chamados ~15M tokens). Por isso o frontend só oferece o dispatcher quando
-`recomendacao.orquestrar=true`; em projeto simples avisa e pede confirmação. Ganho
-sempre-ligado, independente de tamanho = o pin de Sonnet no build.
+**Dispatcher aposentado — sessão interativa venceu em toda medição.**
+Existiu um `core/dispatcher.py` que executava o `plano` task a task, cada uma em
+sessão `claude -p` isolada, no modelo do tier. Medimos à exaustão (200 a ~4.000 LOC):
+ele **sempre** custou mais que a sessão interativa única (3 sessões frias pagam 3×
+o boot, sem acúmulo de cache pra compensar). Removido — não reintroduzir sem novo
+dado que mude essa conclusão.
+
+**`recomendacao.orquestrar` hoje só decide o modelo do `launch.sh`.**
+`analyze()` retorna `recomendacao` (`orquestrar` true/false + `porte` +
+`areas_especializadas`) por heurística: só projeto GRANDE com ≥2 áreas especializadas
+vale orquestrar (sessão opus delegando a subagentes); o resto sai mais barato em
+sessão única. `builder._launch_script(orquestrar)` sobe o `launch.sh` em `opus` quando
+`true`, `sonnet` caso contrário — opus delega, sonnet resolve inline e mais barato.
+
+**Calibração do gate por dados reais.**
+Cada `POST /generate` grava em `projetos.json` o `porte`/`areas_especializadas`/
+`orquestrar`/`motivo` decididos pelo gate (`storage.save_project(recomendacao=...)`).
+Cada `GET /usage` (chamado pelo frontend ao exibir o custo de um projeto) mede o
+custo real da sessão e anexa como `uso_real` + `medido_em` no registro mais recente
+daquela pasta (`storage.record_usage`). Isso constrói o dataset porte×decisão×custo
+real necessário pra um dia recalibrar o limiar por dados em vez de heurística.
 
 ---
 
