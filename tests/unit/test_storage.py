@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from utils.storage import list_projects, save_project
+from utils.storage import list_projects, record_usage, save_project
 
 
 @pytest.fixture
