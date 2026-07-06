@@ -72,3 +72,49 @@ def test_save_creates_data_dir(tmp_store, tmp_path):
     ):
         save_project("/p", [], "x")
         assert data_file.exists()
+
+
+# ── Calibração do gate (recomendacao + uso real) ──────────────────────────────
+
+
+def test_save_project_persists_recomendacao_fields(tmp_store):
+    save_project(
+        "/p",
+        [],
+        "x",
+        recomendacao={
+            "porte": "grande",
+            "areas_especializadas": 3,
+            "orquestrar": True,
+            "motivo": "3 áreas e porte grande",
+        },
+    )
+    p = list_projects()[0]
+    assert p["porte"] == "grande"
+    assert p["areas_especializadas"] == 3
+    assert p["orquestrar"] is True
+    assert p["motivo"] == "3 áreas e porte grande"
+
+
+def test_save_project_without_recomendacao_omits_fields(tmp_store):
+    save_project("/p", [], "x")
+    p = list_projects()[0]
+    assert "porte" not in p
+    assert "orquestrar" not in p
+
+
+def test_record_usage_appends_to_latest_matching_project(tmp_store):
+    save_project("/proj/a", [], "first")
+    save_project("/proj/a", [], "second")
+    record_usage("/proj/a", {"total": 123, "custo_usd": 0.5})
+    projects = list_projects()
+    assert "uso_real" not in projects[0]
+    assert projects[1]["uso_real"] == {"total": 123, "custo_usd": 0.5}
+    assert "medido_em" in projects[1]
+
+
+def test_record_usage_no_matching_project_is_noop(tmp_store):
+    save_project("/proj/a", [], "first")
+    record_usage("/proj/nao-existe", {"total": 1})
+    p = list_projects()[0]
+    assert "uso_real" not in p
